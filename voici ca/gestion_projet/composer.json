@@ -1,0 +1,7 @@
+{
+    "name": "gestion-projet/websocket",
+    "description": "WebSocket pour GestionProjet",
+    "require": {
+        "cboden/ratchet": "^0.4.4"
+    }
+}

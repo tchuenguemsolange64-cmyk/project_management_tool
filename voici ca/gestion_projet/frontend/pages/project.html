@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<!-- frontend/pages/project.html -->
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projet - Gestion Projet</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Même style que le dashboard + styles Kanban */
+        .kanban-board {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding: 20px 0;
+            min-height: 70vh;
+        }
+
+        .kanban-column {
+            min-width: 300px;
+            max-width: 350px;
+            background: #f4f5f7;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .column-title {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .task-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .task-card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .task-priority {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .priority-haute {
+            background: #dc3545;
+            color: white;
+        }
+
+        .priority-moyenne {
+            background: #ffc107;
+            color: black;
+        }
+
+        .priority-basse {
+            background: #28a745;
+            color: white;
+        }
+
+        .task-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .task-assignee {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4e73df, #224abe);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .add-task-btn {
+            width: 100%;
+            padding: 8px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            background: none;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .add-task-btn:hover {
+            border-color: #4e73df;
+            color: #4e73df;
+        }
+    </style>
+</head>
+
+<body>
+    <?php
+    session_start();
+    if(!isset($_SESSION['logged_in'])) {
+        header("Location: login.html");
+        exit();
+    }
+    ?>
+
+    <!-- Sidebar identique au dashboard -->
+    <div class="sidebar">
+        <!-- ... même contenu que dashboard ... -->
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navigation -->
+        <div class="top-nav d-flex justify-content-between align-items-center">
+            <div>
+                <a href="dashboard.html" class="text-decoration-none text-muted me-2">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+                <h4 class="page-title d-inline-block">Site E-commerce</h4>
+            </div>
+
+            <div class="user-info">
+                <button class="btn btn-create" data-bs-toggle="modal" data-bs-target="#inviteMemberModal">
+                    <i class="fas fa-user-plus"></i> Inviter
+                </button>
+                <div class="user-avatar">
+                    <?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project Info -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5>Description du projet</h5>
+                                <p class="text-muted">Développement d'une plateforme de vente en ligne avec panier,
+                                    paiement et gestion des commandes.</p>
+                            </div>
+                            <div>
+                                <span class="badge bg-success me-2">Actif</span>
+                                <span class="badge bg-info">Deadline: 30/06/2024</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kanban Board -->
+        <div class="kanban-board">
+            <!-- Colonne À faire -->
+            <div class="kanban-column">
+                <div class="column-header">
+                    <h6 class="column-title">À faire <span class="badge bg-secondary">3</span></h6>
+                    <i class="fas fa-ellipsis-h"></i>
+                </div>
+
+                <div class="task-card">
+                    <span class="task-priority priority-haute mb-2">Haute</span>
+                    <h6 class="mb-1">Créer la base de données</h6>
+                    <p class="text-muted small">Mise en place des tables MySQL</p>
+                    <div class="task-footer">
+                        <div class="task-assignee">JD</div>
+                        <span><i class="far fa-comment"></i> 3</span>
+                    </div>
+                </div>
+
+                <div class="task-card">
+                    <span class="task-priority priority-moyenne mb-2">Moyenne</span>
+                    <h6 class="mb-1">Design du site</h6>
+                    <p class="text-muted small">Créer la maquette Figma</p>
+                    <div class="task-footer">
+                        <div class="task-assignee">MC</div>
+                        <span><i class="far fa-comment"></i> 1</span>
+                    </div>
+                </div>
+
+                <button class="add-task-btn mt-2">
+                    <i class="fas fa-plus"></i> Ajouter une tâche
+                </button>
+            </div>
+
+            <!-- Colonne En cours -->
+            <div class="kanban-column">
+                <div class="column-header">
+                    <h6 class="column-title">En cours <span class="badge bg-warning">2</span></h6>
+                    <i class="fas fa-ellipsis-h"></i>
+                </div>
+
+                <div class="task-card">
+                    <span class="task-priority priority-haute mb-2">Haute</span>
+                    <h6 class="mb-1">Authentification</h6>
+                    <p class="text-muted small">Système de login/register</p>
+                    <div class="task-footer">
+                        <div class="task-assignee">AB</div>
+                        <span><i class="far fa-comment"></i> 5</span>
+                    </div>
+                </div>
+
+                <div class="task-card">
+                    <span class="task-priority priority-basse mb-2">Basse</span>
+                    <h6 class="mb-1">Tests unitaires</h6>
+                    <p class="text-muted small">Écrire les tests PHPUnit</p>
+                    <div class="task-footer">
+                        <div class="task-assignee">JD</div>
+                        <span><i class="far fa-comment"></i> 2</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Colonne Terminé -->
+            <div class="kanban-column">
+                <div class="column-header">
+                    <h6 class="column-title">Terminé <span class="badge bg-success">4</span></h6>
+                    <i class="fas fa-ellipsis-h"></i>
+                </div>
+
+                <div class="task-card" style="opacity: 0.8;">
+                    <span class="task-priority priority-moyenne mb-2">Moyenne</span>
+                    <h6 class="mb-1">Configuration du serveur</h6>
+                    <p class="text-muted small">Mise en place de l'environnement</p>
+                    <div class="task-footer">
+                        <div class="task-assignee">AB</div>
+                        <span><i class="far fa-check-circle text-success"></i> Terminé</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Drag & Drop simple pour les tâches
+        const tasks = document.querySelectorAll('.task-card');
+        const columns = document.querySelectorAll('.kanban-column');
+
+        tasks.forEach(task => {
+            task.setAttribute('draggable', true);
+
+            task.addEventListener('dragstart', () => {
+                task.classList.add('dragging');
+            });
+
+            task.addEventListener('dragend', () => {
+                task.classList.remove('dragging');
+            });
+        });
+
+        columns.forEach(column => {
+            column.addEventListener('dragover', e => {
+                e.preventDefault();
+                const draggingTask = document.querySelector('.dragging');
+                column.querySelector('.add-task-btn').before(draggingTask);
+            });
+        });
+    </script>
+</body>
+
+</html>
